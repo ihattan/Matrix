@@ -190,13 +190,3 @@ class Matrix:
                 rep += '|{: 06.3f}  '.format(cell)
             rep += '\n'
         return rep+'~~'
-
-test = [[7,4,2,0],[6,3,-1,2],[4,6,2,5],[8,2,-7,1]]
-
-a = Matrix(test)
-
-inv = a.inverse()
-
-print(a)
-print(inv)
-print(a.matrixMul(inv))
