@@ -1,6 +1,6 @@
 def dot(listA, listB):
     if not len(listA) == len(listB):
-        print("invalid dot product dimension: {}*{}".format(len(listA), len(listB)))
+        print 'invalid dot product dimension: {}*{}'.format(len(listA), len(listB))
         return 0
     return sum([listA[i]*listB[i] for i in range(len(listA))])
 
@@ -31,21 +31,21 @@ class Matrix:
 
     def addition(self, other):
         if not self.rows == other.rows or not self.columns == other.columns:
-            print("invalid addition dimensions: {}x{} + {}x{}".format(self.rows, self.columns, other.rows, other.columns))
+            print 'invalid addition dimensions: {}x{} + {}x{}'.format(self.rows, self.columns, other.rows, other.columns)
             return [[]]
 
         return Matrix([[self.matrix[i][j]+other.matrix[i][j] for j in range(self.columns)] for i in range(self.rows)])
 
     def subtraction(self, other):
         if not self.rows == other.rows or not self.columns == other.columns:
-            print("invalid subtraction dimensions: {}x{} + {}x{}".format(self.rows, self.columns, other.rows, other.columns))
+            print 'invalid subtraction dimensions: {}x{} + {}x{}'.format(self.rows, self.columns, other.rows, other.columns)
             return [[]]
 
         return Matrix([[self.matrix[i][j]-other.matrix[i][j] for j in range(self.columns)] for i in range(self.rows)])
 
     def matrixMul(self, other):
         if not self.columns == other.rows:
-            print("invalid dimensions for matrix multiplication: {}x{} * {}x{}".format(self.rows, self.columns, other.rows, other.columns))
+            print 'invalid dimensions for matrix multiplication: {}x{} * {}x{}'.format(self.rows, self.columns, other.rows, other.columns)
             return [[]]
 
         otherTranspose = other.transpose()
@@ -62,11 +62,12 @@ class Matrix:
         self.matrix[currentRow], self.matrix[otherRow] = self.matrix[otherRow], self.matrix[currentRow]
 
     def rowAdd(self, currentRow, otherRow, scalar=1):
+        print(currentRow, otherRow, scalar)
         self.matrix[currentRow] = [self.matrix[currentRow][i] + (scalar*self.matrix[otherRow][i]) for i in range(len(self.matrix[0]))]
 
     def subMatrix(self, remRow, remCol):
         if remRow >= self.rows or remCol >= self.columns:
-            print("invalid subMatrix dimensions: {}x{} remRow={}, remCol={}".format(self.rows, self.columns, remRow, remCol))
+            print 'invalid subMatrix dimensions: {}x{} remRow={}, remCol={}'.format(self.rows, self.columns, remRow, remCol)
             return [[]]
 
         result = self.matrix[:remRow]+self.matrix[remRow+1:]
@@ -77,7 +78,7 @@ class Matrix:
 
     def determinant(self):
         if not self.rows == self.columns:
-            print("invalid determinant dimensions: {}x{}".format(self.rows, self.columns))
+            print 'invalid determinant dimensions: {}x{}'.format(self.rows, self.columns)
             return 0
 
         if self.rows == 2:
@@ -107,7 +108,7 @@ class Matrix:
 
     def gaussDet(self):
         if not self.rows == self.columns:
-            print("invalid gaussDet dimensions: {}x{}".format(self.rows, self.columns))
+            print 'invalid gaussDet dimensions: {}x{}'.format(self.rows, self.columns)
             return 0
 
         reducing = Matrix([[self.matrix[i][j] for j in range(self.columns)] for i in range(self.rows)])
@@ -130,7 +131,7 @@ class Matrix:
 
     def trace(self):
         if not self.rows == self.columns:
-            print("invalid trace dimensions: {}x{}".format(self.rows, self.columns))
+            print 'invalid trace dimensions: {}x{}'.format(self.rows, self.columns)
             return 0
 
         return sum([self.matrix[i][i] for i in range(self.rows)])
@@ -139,7 +140,7 @@ class Matrix:
         for i in range(self.rows-1):
             j = i+1
             while self.matrix[i][i] == 0 and not self.rows < j:
-                if not self.matrix[j][i] == 0 and not self.matrix[i][j] == 0:
+                if not self.matrix[i][j] == 0:
                     self.rowSwitch(i,j)
                     identity.rowSwitch(i, j)
                 j += 1
@@ -148,12 +149,12 @@ class Matrix:
 
     def inverse(self):
         if not self.rows == self.columns:
-            print("invalid inverse dimension: {}x{}".format(self.rows, self.columns))
+            print 'invalid inverse dimension: {}x{}'.format(self.rows, self.columns)
 
         if self.rows == 2:
             det = self.determinant()
             if det == 0:
-                print("matrix has no inverse, det == 0")
+                print 'matrix has no inverse, det == 0'
                 return math.inf
             invdet = 1/det
             result = [[self.matrix[1][1],-self.matrix[0][1]],[self.matrix[1][0],self.matrix[0][0]]]
@@ -165,21 +166,23 @@ class Matrix:
 
         for i in range(reducing.rows):
             if reducing.matrix[i][i] == 0:
-                print("matrix has no inverse, det == 0")
+                print 'matrix has no inverse, det == 0'
                 return math.inf
             for j in range(i+1, reducing.columns):
+                print reducing
                 if not reducing.matrix[j][i] == 0:
-                    identity.rowAdd(j, i, (-reducing.matrix[j][i]/reducing.matrix[i][i]))
-                    reducing.rowAdd(j, i, (-reducing.matrix[j][i]/reducing.matrix[i][i]))
+                    print 'rowAdd {}, {}'.format(reducing.matrix[j][i], reducing.matrix[i][i])
+                    identity.rowAdd(j, i, -float(reducing.matrix[j][i])/float(reducing.matrix[i][i]))
+                    reducing.rowAdd(j, i, -float(reducing.matrix[j][i])/float(reducing.matrix[i][i]))
                     identity = reducing.invRowReduce(identity)
-            identity.rowMul(i, 1/reducing.matrix[i][i])
-            reducing.rowMul(i, 1/reducing.matrix[i][i])
+            identity.rowMul(i, 1/float(reducing.matrix[i][i]))
+            reducing.rowMul(i, 1/float(reducing.matrix[i][i]))
 
         for i in range(reducing.rows):
             for j in range(i):
                 if not reducing.matrix[j][i] == 0:
-                    identity.rowAdd(j, i, (-reducing.matrix[j][i]/reducing.matrix[i][i]))
-                    reducing.rowAdd(j, i, (-reducing.matrix[j][i]/reducing.matrix[i][i]))
+                    identity.rowAdd(j, i, -float(reducing.matrix[j][i])/float(reducing.matrix[i][i]))
+                    reducing.rowAdd(j, i, -float(reducing.matrix[j][i])/float(reducing.matrix[i][i]))
 
         return identity
 
