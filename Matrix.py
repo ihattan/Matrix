@@ -62,7 +62,6 @@ class Matrix:
         self.matrix[currentRow], self.matrix[otherRow] = self.matrix[otherRow], self.matrix[currentRow]
 
     def rowAdd(self, currentRow, otherRow, scalar=1):
-        print(currentRow, otherRow, scalar)
         self.matrix[currentRow] = [self.matrix[currentRow][i] + (scalar*self.matrix[otherRow][i]) for i in range(len(self.matrix[0]))]
 
     def subMatrix(self, remRow, remCol):
@@ -171,7 +170,6 @@ class Matrix:
             for j in range(i+1, reducing.columns):
                 print reducing
                 if not reducing.matrix[j][i] == 0:
-                    print 'rowAdd {}, {}'.format(reducing.matrix[j][i], reducing.matrix[i][i])
                     identity.rowAdd(j, i, -float(reducing.matrix[j][i])/float(reducing.matrix[i][i]))
                     reducing.rowAdd(j, i, -float(reducing.matrix[j][i])/float(reducing.matrix[i][i]))
                     identity = reducing.invRowReduce(identity)
@@ -190,6 +188,9 @@ class Matrix:
         rep = '--\n'
         for row in self.matrix:
             for cell in row:
-                rep += '|{: 06.3f}  '.format(cell)
+                roundedCell = round(cell, 3)
+                if roundedCell == 0.0:
+                    roundedCell = 0.0
+                rep += '|{: 06.3f}  '.format(roundedCell)
             rep += '\n'
         return rep+'~~'
